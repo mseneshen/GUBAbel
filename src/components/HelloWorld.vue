@@ -99,29 +99,27 @@ function handleError(e) {
 desktopCapturer
   .getSources({ types: ["window", "screen"] })
   .then(async sources => {
-    for (const source of sources) {
-      console.log(source.name);
-      if (source.name === "Entire Screen") {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-              mandatory: {
-                chromeMediaSource: "desktop",
-                chromeMediaSourceId: source.id,
-                minWidth: 1280,
-                maxWidth: 1280,
-                minHeight: 720,
-                maxHeight: 720
-              }
+    const source = sources[0];
+    if (source.name === "Entire Screen") {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: {
+            mandatory: {
+              chromeMediaSource: "desktop",
+              chromeMediaSourceId: source.id,
+              minWidth: 0,
+              maxWidth: 3840,
+              minHeight: 0,
+              maxHeight: 2160
             }
-          });
-          handleStream(stream);
-        } catch (e) {
-          handleError(e);
-        }
-        return;
+          }
+        });
+        handleStream(stream);
+      } catch (e) {
+        handleError(e);
       }
+      return;
     }
   });
 
