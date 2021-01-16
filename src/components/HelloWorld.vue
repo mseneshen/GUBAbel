@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-row class="text-center">
+      <video></video>
       <v-col cols="12">
         <v-img
           :src="require('../assets/logo.svg')"
@@ -83,6 +84,46 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { desktopCapturer } from "electron";
+
+function handleStream(stream) {
+  const video = document.querySelector("video");
+  video.srcObject = stream;
+  video.onloadedmetadata = e => video.play();
+}
+
+function handleError(e) {
+  console.log(e);
+}
+
+desktopCapturer
+  .getSources({ types: ["window", "screen"] })
+  .then(async sources => {
+    for (const source of sources) {
+      console.log(source.name);
+      if (source.name === "Entire Screen") {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+              mandatory: {
+                chromeMediaSource: "desktop",
+                chromeMediaSourceId: source.id,
+                minWidth: 1280,
+                maxWidth: 1280,
+                minHeight: 720,
+                maxHeight: 720
+              }
+            }
+          });
+          handleStream(stream);
+        } catch (e) {
+          handleError(e);
+        }
+        return;
+      }
+    }
+  });
 
 export default Vue.extend({
   name: "HelloWorld",

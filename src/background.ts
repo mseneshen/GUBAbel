@@ -1,9 +1,17 @@
 "use strict";
 
+import os from "os";
+import path from "path";
+
 import { app, protocol, BrowserWindow } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+
+// Preferences:
+import preferences from "./preferences";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
+``;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -11,6 +19,9 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 async function createWindow() {
+  // As a test to open preferences while we don't have the taskbar implemented:
+  preferences.show();
+
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
