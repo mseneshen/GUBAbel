@@ -1,9 +1,10 @@
 "use strict";
+/* global __static */
 
 import os from "os";
 import path from "path";
 
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, Tray, Menu } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 
@@ -11,7 +12,7 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import preferences from "./preferences";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-``;
+const iconPath = path.join(__static, "icons", "32x32.png");
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -31,7 +32,8 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean
-    }
+    },
+    icon: iconPath
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -43,6 +45,18 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL("app://./index.html");
   }
+}
+
+async function createTray() {
+  const tray = new Tray(iconPath);
+  const contextMenu = Menu.buildFromTemplate([
+    { label: "Toggle On/Off", type: "checkbox", checked: true },
+    { label: "Settings", type: "normal" },
+    { type: "separator" },
+    { label: "Quit", type: "normal", role: "close" }
+  ]);
+  tray.setToolTip("GUBAbel");
+  tray.setContextMenu(contextMenu);
 }
 
 // Quit when all windows are closed.
@@ -72,6 +86,7 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  createTray();
   createWindow();
 });
 
