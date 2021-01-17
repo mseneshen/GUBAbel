@@ -1,6 +1,6 @@
 "use strict";
-import ipc from "node-ipc";
-import { spawnSync } from "child_process";
+const ipc = require("node-ipc");
+const { spawnSync } = require("child_process");
 
 // Translation context variables:
 let inputlang = "en-CA";
@@ -22,6 +22,7 @@ const bat = spawnSync("cmd.exe", [
 ]);
 const stdout = new TextDecoder("utf-8").decode(bat.stderr);
 const stereoMixRegex = /Stereo Mix \([\w\s]*\)/;
+console.log(stdout)
 const audioSource = stdout.match(stereoMixRegex)[0];
 
 function stopStream() {
@@ -41,8 +42,8 @@ async function transcribeAndTranslate(
   // audioSourceName = 'Stereo Mix (Realtek(R) Audio)'
   audioSourceName = audioSource
 ) {
-  import chalk from "chalk";
-  import { Writable } from "stream";
+  const chalk = require("chalk");
+  const { Writable } = require("stream");
   // import recorder from "node-record-lpcm16";
 
   // Imports the Google Cloud client library
@@ -51,7 +52,7 @@ async function transcribeAndTranslate(
   const { Translate } = require("@google-cloud/translate").v2;
   const translate = new Translate();
 
-  import ffmpeg from "fluent-ffmpeg";
+  const ffmpeg = require("fluent-ffmpeg");
 
   const client = new speech.SpeechClient();
 
