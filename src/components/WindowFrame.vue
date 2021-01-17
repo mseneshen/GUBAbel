@@ -42,7 +42,7 @@ body {
 
 <script lang="ts">
 import Vue from "vue";
-const remote = require("electron").remote;
+import { remote } from "electron";
 
 export default Vue.extend({
   name: "WindowFrame",
