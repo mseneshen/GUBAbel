@@ -11,6 +11,8 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 // Preferences:
 import preferences from "./preferences";
 
+import setupBabelClient from "./babel_client.js";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 const iconPath = path.join(__static, "icons", "32x32.png");
 
@@ -35,6 +37,8 @@ async function createWindow() {
     },
     icon: iconPath
   });
+
+  setupBabelClient(win);
 
   const rootUrl = process.env.WEBPACK_DEV_SERVER_URL as string;
   if (rootUrl) {
