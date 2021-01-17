@@ -36,9 +36,16 @@
 
 <script lang="ts">
 import Vue from "vue";
+import {ipcRenderer} from "electron";
 
 export default Vue.extend({
   name: "Captions",
+  mounted(){
+    ipcRenderer.on('transcript', (event, transcript) => {
+      console.log(`new transcript: ${transcript}`);
+      this.liveCaption = transcript;
+    });
+  },
   data: () => ({
     liveCaption: "haha text goes brrrrrr"
   })
