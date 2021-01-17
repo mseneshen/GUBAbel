@@ -60,7 +60,11 @@ async function createWindow() {
     icon: iconPath
   });
 
-  setupBabelClient(win, preferences.value('inputLanguage'), preferences.value('outputLanguage'));
+  setupBabelClient(
+    win,
+    preferences.value("inputLanguage"),
+    preferences.value("outputLanguage")
+  );
 
   const rootUrl = process.env.WEBPACK_DEV_SERVER_URL as string;
   if (rootUrl) {

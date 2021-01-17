@@ -5,9 +5,9 @@ export const updater = (store: Store<any>) => {
   // send a message to main process every time
   // there is a mutation.
   store.subscribe((mutation, state) => {
-    if(!store.IS_CAPTION_WINDOW) {
+    if (!store.IS_CAPTION_WINDOW) {
       ipcRenderer.send("vuexMutation", mutation);
-    }else{
+    } else {
       console.log("helo i am caption windough");
     }
   });

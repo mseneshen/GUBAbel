@@ -151,11 +151,14 @@ export default Vue.extend({
     outputLang: {
       // getter
       get: function() {
-        return this.findLanguage(this.outLanguages, this.settings.outputLanguage);
+        return this.findLanguage(
+          this.outLanguages,
+          this.settings.outputLanguage
+        );
       },
       // setter
       set: function(newVal) {
-        this.$store.commit("setOutputLanguage", newVal.substring(0,2));
+        this.$store.commit("setOutputLanguage", newVal.substring(0, 2));
       }
     }
   },
