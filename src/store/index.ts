@@ -38,7 +38,7 @@ const store = new Vuex.Store({
   },
   actions: {},
   modules: {},
-  plugins: []
+  plugins: [updater]
 });
 
 export default store;

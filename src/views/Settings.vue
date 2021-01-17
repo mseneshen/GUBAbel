@@ -112,26 +112,22 @@ export default Vue.extend({
       },
       {
         text: "Chinese, Mandarin (Traditional, Taiwan)",
-        val: "zh-TW"
+        val: "zh"
       },
-      { text: "Czech (Czech Republic)", val: "cs-CZ" },
-      { text: "Danish (Denmark)", val: "da-DK" },
-      { text: "English (Australia)", val: "en-AU" },
-      { text: "English (India)", val: "en-IN" },
-      { text: "English (Singapore)", val: "en-SG" },
-      { text: "English (United Kingdom)", val: "en-GB" },
-      { text: "English (United States)", val: "en-US" },
-      { text: "Finnish (Finland)", val: "fi-FI" },
-      { text: "French (France)", val: "fr-FR" },
-      { text: "German (Germany)", val: "de-DE" },
-      { text: "Hindi (India)", val: "hi-IN" },
-      { text: "Indonesian (Indonesia)", val: "id-ID" },
-      { text: "Italian (Italy)", val: "it-IT" },
-      { text: "Japanese (Japan)", val: "ja-JP" },
-      { text: "Korean (South Korea)", val: "ko-KR" },
-      { text: "Spanish (United States)", val: "es-US" },
-      { text: "Swedish (Sweden)", val: "sv-SE" },
-      { text: "Turkish (Turkey)", val: "tr-TR" }
+      { text: "Czech (Czech Republic)", val: "cs" },
+      { text: "Danish (Denmark)", val: "da" },
+      { text: "English", val: "en" },
+      { text: "Finnish (Finland)", val: "fi" },
+      { text: "French (France)", val: "fr" },
+      { text: "German (Germany)", val: "de" },
+      { text: "Hindi (India)", val: "hi" },
+      { text: "Indonesian (Indonesia)", val: "id" },
+      { text: "Italian (Italy)", val: "it" },
+      { text: "Japanese (Japan)", val: "ja" },
+      { text: "Korean (South Korea)", val: "ko" },
+      { text: "Spanish (United States)", val: "es" },
+      { text: "Swedish (Sweden)", val: "sv" },
+      { text: "Turkish (Turkey)", val: "tr" }
     ]
   }),
   computed: {
@@ -158,7 +154,7 @@ export default Vue.extend({
       },
       // setter
       set: function(newVal) {
-        this.$store.commit("setOutputLanguage", newVal.substring(0, 2));
+        this.$store.commit("setOutputLanguage", newVal);
       }
     }
   },
