@@ -21,13 +21,15 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // As a test to open preferences while we don't have the taskbar implemented:
-  preferences.show();
+  // preferences.show();
 
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 80,
+    frame: false,
     webPreferences: {
+      devTools: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -36,9 +38,12 @@ async function createWindow() {
     icon: iconPath
   });
 
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
+  const rootUrl = process.env.WEBPACK_DEV_SERVER_URL as string;
+  if (rootUrl) {
     // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
+
+    console.log(rootUrl);
+    await win.loadURL(rootUrl);
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
