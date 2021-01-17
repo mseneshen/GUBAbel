@@ -6,20 +6,20 @@ ipc.config.retry = 1500;
 let inputlang = "en-CA";
 let outputlang = "fr";
 
-export default {
-  setInputLang: function(new_inputlang) {
+module.exports = {
+  setInputLang(new_inputlang) {
     inputlang = new_inputlang;
     if (ipc.of.babel) {
       ipc.of.babel.emit("inputlang", inputlang);
     }
   },
-  setOutputLang: function(new_outputlang) {
+  setOutputLang(new_outputlang) {
     outputlang = new_outputlang;
     if (ipc.of.babel) {
       ipc.of.babel.emit("outputlang", outputlang);
     }
   },
-  setupBabelClient: function(browser_window) {
+  setupBabelClient(browser_window) {
     ipc.connectTo("babel", function() {
       ipc.of.babel.on("connect", function() {
         ipc.log("## connected to world ##".rainbow, ipc.config.delay);
