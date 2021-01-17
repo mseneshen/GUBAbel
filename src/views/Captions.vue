@@ -42,14 +42,17 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {ipcRenderer} from "electron";
+import { ipcRenderer } from "electron";
 
 export default Vue.extend({
   name: "Captions",
-  mounted(){
-    ipcRenderer.on('transcript', (event, transcript) => {
+  mounted() {
+    ipcRenderer.on("transcript", (event, transcript) => {
       console.log(`new transcript: ${transcript}`);
       this.liveCaption = transcript;
+    });
+    ipcRenderer.on("vuexUpdate", (event, mutation) => {
+      this.$store.commit(mutation.type, mutation.payload);
     });
   },
   data: () => ({
@@ -62,6 +65,9 @@ export default Vue.extend({
         "--font-family": this.$store.state.fontFamily
       };
     }
+  },
+  beforeDestroy() {
+    this.unsubscribe();
   }
 });
 </script>

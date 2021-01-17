@@ -37,12 +37,18 @@ ipcMain.on("setOutputLang", (event, arg) => {
   event.reply("transcript", "Set output language to: " + arg);
 });
 
+ipcMain.on("vuexMutation", (event, mutation) => {
+  BrowserWindow.getAllWindows()[1].webContents.send("vuexUpdate", mutation);
+});
+
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: preferences.value("defaultDimensions.width"),
     height: preferences.value("defaultDimensions.height"),
     frame: false,
+    center: true,
+    alwaysOnTop: true,
     webPreferences: {
       enableRemoteModule: true,
       // devTools: false,

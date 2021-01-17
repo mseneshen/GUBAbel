@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { ipcRenderer } from "electron";
+import { updater } from "@/plugins/vuexMutations.ts";
+import { stat } from "fs";
 
 Vue.use(Vuex);
 
@@ -33,7 +35,8 @@ const store = new Vuex.Store({
     }
   },
   actions: {},
-  modules: {}
+  modules: {},
+  plugins: [updater]
 });
 
 export default store;

@@ -1,4 +1,4 @@
-const ipc = require("node-ipc");
+import ipc from "node-ipc";
 
 ipc.config.id = "babel";
 ipc.config.retry = 1500;

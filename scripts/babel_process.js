@@ -1,14 +1,28 @@
 "use strict";
+import ipc from "node-ipc";
+import { spawnSync } from "child_process";
 
 // Translation context variables:
 let inputlang = "en-CA";
 let outputlang = "fr";
 
-let ffmpeg_command = false;
+let ffmpegCommand = false;
 let socket = false;
 let recognizeStream = null;
 
-const ipc = require("node-ipc");
+const bat = spawnSync("cmd.exe", [
+  "/c",
+  "ffmpeg",
+  "-list_devices",
+  "true",
+  "-f",
+  "dshow",
+  "-i",
+  "dummy"
+]);
+const stdout = new TextDecoder("utf-8").decode(bat.stderr);
+const stereoMixRegex = /Stereo Mix \([\w\s]*\)/;
+const audioSource = stdout.match(stereoMixRegex)[0];
 
 function stopStream() {
   console.log("stopStream called");
@@ -25,11 +39,11 @@ async function transcribeAndTranslate(
   streamingLimit = 1800000,
   targetLanguage = "fr",
   // audioSourceName = 'Stereo Mix (Realtek(R) Audio)'
-  audioSourceName = "Microphone (Realtek(R) Audio)"
+  audioSourceName = audioSource
 ) {
-  const chalk = require("chalk");
-  const { Writable } = require("stream");
-  const recorder = require("node-record-lpcm16");
+  import chalk from "chalk";
+  import { Writable } from "stream";
+  // import recorder from "node-record-lpcm16";
 
   // Imports the Google Cloud client library
   // Currently, only v1p1beta1 contains result-end-time
@@ -37,8 +51,7 @@ async function transcribeAndTranslate(
   const { Translate } = require("@google-cloud/translate").v2;
   const translate = new Translate();
 
-  const ffmpeg = require("fluent-ffmpeg");
-  const fs = require("fs");
+  import ffmpeg from "fluent-ffmpeg";
 
   const client = new speech.SpeechClient();
 
@@ -190,9 +203,9 @@ async function transcribeAndTranslate(
       stopStream();
     }
 
-    if (!ffmpeg_command) {
+    if (!ffmpegCommand) {
       console.log("ffmpeg dead, not restarting stream");
-      console.log(ffmpeg_command);
+      console.log(ffmpegCommand);
       return;
     }
 
@@ -218,7 +231,7 @@ async function transcribeAndTranslate(
     startStream();
   }
 
-  ffmpeg_command = ffmpeg("audio=" + audioSourceName)
+  ffmpegCommand = ffmpeg("audio=" + audioSourceName)
     .inputOptions(["-f dshow", "-t 3600", "-ac 1"])
     .outputOptions([
       "-f " + encoding.toLowerCase(),
@@ -235,11 +248,11 @@ async function transcribeAndTranslate(
     })
     .on("end", function() {
       console.log("Successfuly finished");
-      ffmpeg_command = false;
+      ffmpegCommand = false;
     })
     .output(audioInputStreamTransform, { end: true });
 
-  ffmpeg_command.run();
+  ffmpegCommand.run();
 
   console.log("");
   console.log("Listening, press Ctrl+C to stop.");
@@ -262,42 +275,42 @@ ipc.config.id = "babel";
 ipc.config.retry = 1500;
 
 function killFfmpeg() {
-  if (ffmpeg_command) {
-    ffmpeg_command.kill();
-    ffmpeg_command = false;
+  if (ffmpegCommand) {
+    ffmpegCommand.kill();
+    ffmpegCommand = false;
   }
 
   stopStream();
 }
 
 ipc.serve(function() {
-  ipc.server.on("inputlang", function(data, a_socket) {
+  ipc.server.on("inputlang", function(data, aSocket) {
     ipc.log("setting input language to: ".debug, data);
     inputlang = data;
-    if (ffmpeg_command) {
+    if (ffmpegCommand) {
       killFfmpeg();
       setTimeout(transcribeAndTranslate, 3000);
     }
   });
 
-  ipc.server.on("outputlang", function(data, a_socket) {
+  ipc.server.on("outputlang", function(data, aSocket) {
     ipc.log("setting output language to: ".debug, data);
     outputlang = data;
-    if (ffmpeg_command) {
+    if (ffmpegCommand) {
       killFfmpeg();
       setTimeout(transcribeAndTranslate, 3000);
     }
   });
 
-  ipc.server.on("start_transcript", function(data, a_socket) {
+  ipc.server.on("start_transcript", function(data, aSocket) {
     ipc.log("got a request to start transcription process ".debug, data);
-    socket = a_socket;
+    socket = aSocket;
 
     ipc.server.emit(socket, "starting_transcription");
     transcribeAndTranslate();
   });
 
-  ipc.server.on("socket.disconnected", function(a_socket, destroyedSockedID) {
+  ipc.server.on("socket.disconnected", function(aSocket, destroyedSockedID) {
     socket = false;
   });
 });
