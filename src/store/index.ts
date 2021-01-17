@@ -12,10 +12,12 @@ const store = new Vuex.Store({
     setInputLanguage(state, lang) {
       state.inputLanguage = lang;
       ipcRenderer.sendSync("setPreferences", state);
+      ipcRenderer.sendSync("setInputLang", lang);
     },
     setOutputLanguage(state, lang) {
       state.outputLanguage = lang;
       ipcRenderer.sendSync("setPreferences", state);
+      ipcRenderer.sendSync("setOutputLang", lang);
     },
     setFontSize(state, size) {
       state.fontSize = size;

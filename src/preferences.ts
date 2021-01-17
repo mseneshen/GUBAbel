@@ -15,7 +15,7 @@ export default new ElectronPreferences({
    */
   defaults: {
     inputLanguage: "en-US",
-    outputLanguage: "fr-FR",
+    outputLanguage: "fr",
     fontSize: 12,
     fontFamily: "Helvetica",
     defaultDimensionsWidth: 800,

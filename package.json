@@ -10,7 +10,8 @@
     "electron:serve": "vue-cli-service electron:serve",
     "electron:generate-icons": "electron-icon-builder --input=./src/assets/logo.png --output=public --flatten",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "babel:background": "node scripts/babel_process.js"
   },
   "main": "background.js",
   "dependencies": {

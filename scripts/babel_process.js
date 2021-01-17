@@ -1,28 +1,15 @@
 "use strict";
-import ipc from "node-ipc";
-import { spawnSync } from "child_process";
+
 
 // Translation context variables:
-let inputlang = "en-CA";
-let outputlang = "fr";
+var inputlang = "en-CA";
+var outputlang = "fr";
 
-let ffmpegCommand = false;
+let ffmpeg_command = false;
 let socket = false;
 let recognizeStream = null;
 
-const bat = spawnSync("cmd.exe", [
-  "/c",
-  "ffmpeg",
-  "-list_devices",
-  "true",
-  "-f",
-  "dshow",
-  "-i",
-  "dummy"
-]);
-const stdout = new TextDecoder("utf-8").decode(bat.stderr);
-const stereoMixRegex = /Stereo Mix \([\w\s]*\)/;
-const audioSource = stdout.match(stereoMixRegex)[0];
+const ipc = require("node-ipc");
 
 function stopStream() {
   console.log("stopStream called");
@@ -39,11 +26,11 @@ async function transcribeAndTranslate(
   streamingLimit = 1800000,
   targetLanguage = "fr",
   // audioSourceName = 'Stereo Mix (Realtek(R) Audio)'
-  audioSourceName = audioSource
+  audioSourceName = "Microphone (Realtek(R) Audio)"
 ) {
-  import chalk from "chalk";
-  import { Writable } from "stream";
-  // import recorder from "node-record-lpcm16";
+  const chalk = require("chalk");
+  const { Writable } = require("stream");
+  const recorder = require("node-record-lpcm16");
 
   // Imports the Google Cloud client library
   // Currently, only v1p1beta1 contains result-end-time
@@ -51,14 +38,15 @@ async function transcribeAndTranslate(
   const { Translate } = require("@google-cloud/translate").v2;
   const translate = new Translate();
 
-  import ffmpeg from "fluent-ffmpeg";
+  const ffmpeg = require("fluent-ffmpeg");
+  const fs = require("fs");
 
   const client = new speech.SpeechClient();
 
   const config = {
     encoding: encoding,
     sampleRateHertz: sampleRateHertz,
-    languageCode: languageCode
+    languageCode: inputlang
   };
 
   const request = {
@@ -78,13 +66,13 @@ async function transcribeAndTranslate(
   let lastTranscriptWasFinal = false;
 
   async function translateFinalizedTranscript(text) {
-    const [translation] = await translate.translate(text, targetLanguage);
+    const [translation] = await translate.translate(text, outputlang);
 
     console.log(
       "Got translation:\nOriginal text: " +
         text +
         "\nTranslated to " +
-        targetLanguage +
+        outputlang +
         ": " +
         translation
     );
@@ -203,9 +191,9 @@ async function transcribeAndTranslate(
       stopStream();
     }
 
-    if (!ffmpegCommand) {
+    if (!ffmpeg_command) {
       console.log("ffmpeg dead, not restarting stream");
-      console.log(ffmpegCommand);
+      console.log(ffmpeg_command);
       return;
     }
 
@@ -231,7 +219,7 @@ async function transcribeAndTranslate(
     startStream();
   }
 
-  ffmpegCommand = ffmpeg("audio=" + audioSourceName)
+  ffmpeg_command = ffmpeg("audio=" + audioSourceName)
     .inputOptions(["-f dshow", "-t 3600", "-ac 1"])
     .outputOptions([
       "-f " + encoding.toLowerCase(),
@@ -248,11 +236,11 @@ async function transcribeAndTranslate(
     })
     .on("end", function() {
       console.log("Successfuly finished");
-      ffmpegCommand = false;
+      ffmpeg_command = false;
     })
     .output(audioInputStreamTransform, { end: true });
 
-  ffmpegCommand.run();
+  ffmpeg_command.run();
 
   console.log("");
   console.log("Listening, press Ctrl+C to stop.");
@@ -275,44 +263,41 @@ ipc.config.id = "babel";
 ipc.config.retry = 1500;
 
 function killFfmpeg() {
-  if (ffmpegCommand) {
-    ffmpegCommand.kill();
-    ffmpegCommand = false;
+  if (ffmpeg_command) {
+    ffmpeg_command.kill();
   }
 
   stopStream();
 }
 
 ipc.serve(function() {
-  ipc.server.on("inputlang", function(data, aSocket) {
+  ipc.server.on("inputlang", function(data, a_socket) {
     ipc.log("setting input language to: ".debug, data);
     inputlang = data;
-    if (ffmpegCommand) {
-      killFfmpeg();
-      setTimeout(transcribeAndTranslate, 3000);
-    }
   });
 
-  ipc.server.on("outputlang", function(data, aSocket) {
-    ipc.log("setting output language to: ".debug, data);
+  ipc.server.on("outputlang", function(data, a_socket) {
+    ipc.log("setting output language to: ".error, data);
     outputlang = data;
-    if (ffmpegCommand) {
-      killFfmpeg();
-      setTimeout(transcribeAndTranslate, 3000);
-    }
   });
 
-  ipc.server.on("start_transcript", function(data, aSocket) {
+  ipc.server.on("start_transcript", function(data, a_socket) {
     ipc.log("got a request to start transcription process ".debug, data);
-    socket = aSocket;
+    socket = a_socket;
 
     ipc.server.emit(socket, "starting_transcription");
     transcribeAndTranslate();
   });
 
-  ipc.server.on("socket.disconnected", function(aSocket, destroyedSockedID) {
+  ipc.server.on("socket.disconnected", function(a_socket, destroyedSockedID) {
+    killFfmpeg()
     socket = false;
   });
 });
 
+process.on('exit', () => {
+  console.log("exit event");
+});
+
 ipc.server.start();
+

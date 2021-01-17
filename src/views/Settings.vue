@@ -5,7 +5,7 @@
       <v-select
         required
         label="Input Language"
-        :items="languages"
+        :items="inLanguages"
         item-text="text"
         item-value="val"
         v-model="inputLang"
@@ -13,7 +13,7 @@
       <v-select
         required
         label="Output Language"
-        :items="languages"
+        :items="outLanguages"
         item-text="text"
         item-value="val"
         v-model="outputLang"
@@ -77,7 +77,7 @@ export default Vue.extend({
     WindowFrame
   },
   data: () => ({
-    languages: [
+    inLanguages: [
       {
         text: "Chinese, Mandarin (Simplified, China)",
         val: "zh (cmn-Hans-CN)"
@@ -85,6 +85,34 @@ export default Vue.extend({
       {
         text: "Chinese, Mandarin (Traditional, Taiwan)",
         val: "zh-TW (cmn-Hant-TW)"
+      },
+      { text: "Czech (Czech Republic)", val: "cs-CZ" },
+      { text: "Danish (Denmark)", val: "da-DK" },
+      { text: "English (Australia)", val: "en-AU" },
+      { text: "English (India)", val: "en-IN" },
+      { text: "English (Singapore)", val: "en-SG" },
+      { text: "English (United Kingdom)", val: "en-GB" },
+      { text: "English (United States)", val: "en-US" },
+      { text: "Finnish (Finland)", val: "fi-FI" },
+      { text: "French (France)", val: "fr-FR" },
+      { text: "German (Germany)", val: "de-DE" },
+      { text: "Hindi (India)", val: "hi-IN" },
+      { text: "Indonesian (Indonesia)", val: "id-ID" },
+      { text: "Italian (Italy)", val: "it-IT" },
+      { text: "Japanese (Japan)", val: "ja-JP" },
+      { text: "Korean (South Korea)", val: "ko-KR" },
+      { text: "Spanish (United States)", val: "es-US" },
+      { text: "Swedish (Sweden)", val: "sv-SE" },
+      { text: "Turkish (Turkey)", val: "tr-TR" }
+    ],
+    outLanguages: [
+      {
+        text: "Chinese, Mandarin (Simplified, China)",
+        val: "zh"
+      },
+      {
+        text: "Chinese, Mandarin (Traditional, Taiwan)",
+        val: "zh-TW"
       },
       { text: "Czech (Czech Republic)", val: "cs-CZ" },
       { text: "Danish (Denmark)", val: "da-DK" },
@@ -113,7 +141,7 @@ export default Vue.extend({
     inputLang: {
       // getter
       get: function() {
-        return this.findLanguage(this.languages, this.settings.inputLanguage);
+        return this.findLanguage(this.inLanguages, this.settings.inputLanguage);
       },
       // setter
       set: function(newVal) {
@@ -123,11 +151,11 @@ export default Vue.extend({
     outputLang: {
       // getter
       get: function() {
-        return this.findLanguage(this.languages, this.settings.outputLanguage);
+        return this.findLanguage(this.outLanguages, this.settings.outputLanguage);
       },
       // setter
       set: function(newVal) {
-        this.$store.commit("setOutputLanguage", newVal);
+        this.$store.commit("setOutputLanguage", newVal.substring(0,2));
       }
     }
   },

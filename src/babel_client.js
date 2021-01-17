@@ -3,9 +3,6 @@ const ipc = require("node-ipc");
 ipc.config.id = "babel";
 ipc.config.retry = 1500;
 
-let inputlang = "en-CA";
-let outputlang = "fr";
-
 module.exports = {
   setInputLang(new_inputlang) {
     inputlang = new_inputlang;
@@ -19,13 +16,13 @@ module.exports = {
       ipc.of.babel.emit("outputlang", outputlang);
     }
   },
-  setupBabelClient(browser_window) {
+  setupBabelClient(browser_window, inputLang, outputLang) {
     ipc.connectTo("babel", function() {
       ipc.of.babel.on("connect", function() {
         ipc.log("## connected to world ##".rainbow, ipc.config.delay);
 
-        ipc.of.babel.emit("inputlang", inputlang);
-        ipc.of.babel.emit("outputlang", outputlang);
+        ipc.of.babel.emit("inputlang", inputLang);
+        ipc.of.babel.emit("outputlang", outputLang);
 
         ipc.of.babel.emit("start_transcript", "");
       });

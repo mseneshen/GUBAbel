@@ -52,6 +52,7 @@ export default Vue.extend({
       this.liveCaption = transcript;
     });
     ipcRenderer.on("vuexUpdate", (event, mutation) => {
+      this.$store.IS_CAPTION_WINDOW = true;
       this.$store.commit(mutation.type, mutation.payload);
     });
   },
