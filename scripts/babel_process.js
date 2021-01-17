@@ -1,18 +1,18 @@
 "use strict";
 
 // Translation context variables:
-var inputlang = "en-CA";
-var outputlang = "fr";
+let inputlang = "en-CA";
+let outputlang = "fr";
 
-var ffmpeg_command = false;
-var socket = false;
-var recognizeStream = null;
+let ffmpeg_command = false;
+let socket = false;
+let recognizeStream = null;
 
 const ipc = require("node-ipc");
 
 function stopStream() {
   console.log("stopStream called");
-  if(recognizeStream){
+  if (recognizeStream) {
     recognizeStream.end();
     recognizeStream = null;
   }
@@ -76,7 +76,7 @@ async function transcribeAndTranslate(
         translation
     );
 
-    if(socket) {
+    if (socket) {
       console.log("Sending transcript to socket...");
       ipc.server.emit(socket, "transcript", translation);
     }
@@ -262,7 +262,7 @@ ipc.config.id = "babel";
 ipc.config.retry = 1500;
 
 function killFfmpeg() {
-  if(ffmpeg_command) {
+  if (ffmpeg_command) {
     ffmpeg_command.kill();
     ffmpeg_command = false;
   }
@@ -274,22 +274,24 @@ ipc.serve(function() {
   ipc.server.on("inputlang", function(data, a_socket) {
     ipc.log("setting input language to: ".debug, data);
     inputlang = data;
-    killFfmpeg();
-    setTimeout(transcribeAndTranslate, 3000);
+    if (ffmpeg_command) {
+      killFfmpeg();
+      setTimeout(transcribeAndTranslate, 3000);
+    }
   });
 
   ipc.server.on("outputlang", function(data, a_socket) {
     ipc.log("setting output language to: ".debug, data);
     outputlang = data;
-    killFfmpeg();
-    setTimeout(transcribeAndTranslate, 3000);
+    if (ffmpeg_command) {
+      killFfmpeg();
+      setTimeout(transcribeAndTranslate, 3000);
+    }
   });
-
 
   ipc.server.on("start_transcript", function(data, a_socket) {
     ipc.log("got a request to start transcription process ".debug, data);
     socket = a_socket;
-
 
     ipc.server.emit(socket, "starting_transcription");
     transcribeAndTranslate();
@@ -297,7 +299,7 @@ ipc.serve(function() {
 
   ipc.server.on("socket.disconnected", function(a_socket, destroyedSockedID) {
     socket = false;
-  })
+  });
 });
 
 ipc.server.start();

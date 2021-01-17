@@ -4,14 +4,18 @@
 import os from "os";
 import path from "path";
 
-import { app, protocol, BrowserWindow, Tray, Menu } from "electron";
+import { app, protocol, BrowserWindow, Tray, Menu, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 
 // Preferences:
 import preferences from "./preferences";
 
-import setupBabelClient from "./babel_client.js";
+import {
+  setInputLang,
+  setOutputLang,
+  setupBabelClient
+} from "./babel_client.js";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 const iconPath = path.join(__static, "icons", "32x32.png");
@@ -20,6 +24,18 @@ const iconPath = path.join(__static, "icons", "32x32.png");
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
+
+ipcMain.on("setInputLang", (event, arg) => {
+  console.log("setting input lang to: ", arg);
+  setInputLang(arg);
+  event.reply("transcript", "Set input language to: " + arg);
+});
+
+ipcMain.on("setOutputLang", (event, arg) => {
+  console.log("setting output lang to: ", arg);
+  setOutputLang(arg);
+  event.reply("transcript", "Set output language to: " + arg);
+});
 
 async function createWindow() {
   // As a test to open preferences while we don't have the taskbar implemented:
