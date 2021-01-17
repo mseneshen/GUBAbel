@@ -27,8 +27,11 @@
 function main(
     encoding = 'FLAC',
     sampleRateHertz = 44100,
-    languageCode = 'fr-CA',
-    streamingLimit = 290000
+    languageCode = 'en-CA',
+    streamingLimit = 290000,
+    targetLanguage = 'fr',
+    // audioSourceName = 'Stereo Mix (Realtek(R) Audio)'
+    audioSourceName = 'Microphone (Realtek(R) Audio)'
 ) {
     // [START speech_transcribe_infinite_streaming]
 
@@ -44,6 +47,11 @@ function main(
     // Imports the Google Cloud client library
     // Currently, only v1p1beta1 contains result-end-time
     const speech = require('@google-cloud/speech').v1p1beta1;
+    const {Translate} = require('@google-cloud/translate').v2;
+    const translate = new Translate();
+
+    const ffmpeg = require('fluent-ffmpeg');
+    const fs = require('fs');
 
     const client = new speech.SpeechClient();
 
@@ -55,7 +63,7 @@ function main(
 
     const request = {
         config,
-        interimResults: true,
+        interimResults: true
     };
 
     let recognizeStream = null;
@@ -68,6 +76,12 @@ function main(
     let newStream = true;
     let bridgingOffset = 0;
     let lastTranscriptWasFinal = false;
+
+    async function translateFinalizedTranscript(text) {
+        const [translation] = await translate.translate(text, targetLanguage);
+
+        console.log("Got translation:\nOriginal text: " + text + "\nTranslated to " + targetLanguage + ": " + translation);
+    }
 
     function startStream() {
         // Clear current audioInput
@@ -113,6 +127,9 @@ function main(
 
             isFinalEndTime = resultEndTime;
             lastTranscriptWasFinal = true;
+
+            // Send this to the translator:
+            translateFinalizedTranscript(stream.results[0].alternatives[0].transcript);
         } else {
             // Make sure transcript does not exceed console character length
             if (stdoutText.length > process.stdout.columns) {
@@ -194,25 +211,8 @@ function main(
 
         startStream();
     }
-    // Start recording and send the microphone input to the Speech API
-    // recorder
-    //     .record({
-    //         sampleRateHertz: sampleRateHertz,
-    //         threshold: 0, // Silence threshold
-    //         silence: 1000,
-    //         keepSilence: true,
-    //         recordProgram: 'rec', // Try also "arecord" or "sox"
-    //     })
-    //     .stream()
-    //     .on('error', err => {
-    //         console.error('Audio recording error ' + err);
-    //     })
-    //     .pipe(audioInputStreamTransform);
 
-    const ffmpeg = require('fluent-ffmpeg');
-    const fs = require('fs');
-
-    const command = ffmpeg('audio=Stereo Mix (Realtek(R) Audio)')
+    const command = ffmpeg('audio=' + audioSourceName)
         .inputOptions(['-f dshow', '-t 30', '-ac 1'])
         .outputOptions(['-f ' + encoding.toLowerCase(), '-sample_rate ' + sampleRateHertz])
         .on('start', function() {

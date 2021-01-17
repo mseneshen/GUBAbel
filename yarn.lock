@@ -909,6 +909,19 @@
     "pumpify" "^2.0.0"
     "stream-events" "^1.0.4"
 
+"@google-cloud/translate@^6.1.0":
+  "integrity" "sha512-gVAwO2EVv6dvUo2bqhEo7tZY3dd3Oe2VuKnkGdLZkdsq9rdCmJZEpz8snshOCOeoX/l5vY3F/UzwoBArtQCgPg=="
+  "resolved" "https://registry.npmjs.org/@google-cloud/translate/-/translate-6.1.0.tgz"
+  "version" "6.1.0"
+  dependencies:
+    "@google-cloud/common" "^3.0.0"
+    "@google-cloud/promisify" "^2.0.0"
+    "arrify" "^2.0.0"
+    "extend" "^3.0.2"
+    "google-gax" "^2.9.2"
+    "is-html" "^2.0.0"
+    "protobufjs" "^6.8.8"
+
 "@grpc/grpc-js@~1.2.0":
   "integrity" "sha512-hMjS4/TiGFtvMxjmM3mgXCw6VIGeI0EWTNzdcV6R+qqCh33dLDcK1wVceAABXKZ+Fia1nETU49RBesOiukQjGA=="
   "resolved" "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.2.3.tgz"
@@ -6200,7 +6213,7 @@
   "resolved" "https://registry.npmjs.org/html-tags/-/html-tags-2.0.0.tgz"
   "version" "2.0.0"
 
-"html-tags@^3.1.0":
+"html-tags@^3.0.0", "html-tags@^3.1.0":
   "integrity" "sha512-1qYz89hW3lFDEazhjW0yVAV87lw8lVkrJocr72XmBkMKsoSVJCQx3W8BXsC7hO2qAt8BoVjYjtAcZ9perqGnNg=="
   "resolved" "https://registry.npmjs.org/html-tags/-/html-tags-3.1.0.tgz"
   "version" "3.1.0"
@@ -6770,6 +6783,13 @@
   "version" "4.0.1"
   dependencies:
     "is-extglob" "^2.1.1"
+
+"is-html@^2.0.0":
+  "integrity" "sha512-S+OpgB5i7wzIue/YSE5hg0e5ZYfG3hhpNh9KGl6ayJ38p7ED6wxQLd1TV91xHpcTvw90KMJ9EwN3F/iNflHBVg=="
+  "resolved" "https://registry.npmjs.org/is-html/-/is-html-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "html-tags" "^3.0.0"
 
 "is-installed-globally@^0.3.1":
   "integrity" "sha512-wZ8x1js7Ia0kecP/CHM/3ABkAmujX7WPvQk6uu3Fly/Mk44pySulQpnHG46OMjHGXApINnV4QhY3SWnECO2z5g=="
@@ -9320,7 +9340,7 @@
   "resolved" "https://registry.npmjs.org/proto-list/-/proto-list-1.2.4.tgz"
   "version" "1.2.4"
 
-"protobufjs@^6.10.2", "protobufjs@^6.8.6":
+"protobufjs@^6.10.2", "protobufjs@^6.8.6", "protobufjs@^6.8.8":
   "integrity" "sha512-27yj+04uF6ya9l+qfpH187aqEzfCF4+Uit0I9ZBQVqK09hk/SQzKa2MUqUpXaVa7LOFRg1TSSr3lVxGOk6c0SQ=="
   "resolved" "https://registry.npmjs.org/protobufjs/-/protobufjs-6.10.2.tgz"
   "version" "6.10.2"
