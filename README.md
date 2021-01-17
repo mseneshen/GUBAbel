@@ -1,4 +1,7 @@
-# gubabel-fish-app
+# GUBAbel Fish
+### Live translated transcripts for video conferencing, lectures, and other computer audio sources.
+
+![Image of our beautiful university mascot after his reincarnation as a fish](_assets/guba-babel-fish.png)
 
 ## Project setup
 ```
