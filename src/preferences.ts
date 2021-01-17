@@ -18,10 +18,8 @@ export default new ElectronPreferences({
     outputLanguage: "French (France)\tfr-FR",
     fontSize: 12,
     fontFamily: "Helvetica",
-    defaultDimensions: {
-      width: 800,
-      height: 100
-    }
+    defaultDimensionsWidth: 800,
+    defaultDimensionsHeight: 100
   },
   /**
    * If the `onLoad` method is specified, this function will be called immediately after
