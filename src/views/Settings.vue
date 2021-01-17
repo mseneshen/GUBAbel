@@ -57,6 +57,11 @@
         @change="updateHeight"
       ></v-slider>
     </v-form>
+    <v-footer absolute dark>
+      <v-col class="text-center" cols="12"
+        >Settings apply on <strong>restart</strong></v-col
+      >
+    </v-footer>
   </div>
 </template>
 
