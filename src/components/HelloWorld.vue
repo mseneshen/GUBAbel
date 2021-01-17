@@ -84,42 +84,6 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { desktopCapturer } from "electron";
-
-function handleStream(stream) {
-  const video = document.querySelector("video");
-  video.srcObject = stream;
-  video.onloadedmetadata = e => video.play();
-}
-
-function handleError(e) {
-  console.log(e);
-}
-
-desktopCapturer
-  .getSources({ types: ["window", "screen"] })
-  .then(async sources => {
-    const source = sources[0];
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: {
-          mandatory: {
-            chromeMediaSource: "desktop",
-            chromeMediaSourceId: source.id,
-            minWidth: 0,
-            maxWidth: 3840,
-            minHeight: 0,
-            maxHeight: 2160
-          }
-        }
-      });
-      handleStream(stream);
-    } catch (e) {
-      handleError(e);
-    }
-    return;
-  });
 
 export default Vue.extend({
   name: "HelloWorld",
