@@ -26,8 +26,10 @@ async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 800,
-    height: 600,
+    height: 80,
+    frame: false,
     webPreferences: {
+      devTools: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -36,26 +38,12 @@ async function createWindow() {
     icon: iconPath
   });
 
-  const captions = new BrowserWindow({
-    width: 800,
-    height: 100,
-    frame: false,
-    webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: (process.env
-        .ELECTRON_NODE_INTEGRATION as unknown) as boolean
-    }
-  });
-
   const rootUrl = process.env.WEBPACK_DEV_SERVER_URL as string;
   if (rootUrl) {
     // Load the url of the dev server if in development mode
 
     console.log(rootUrl);
-    console.log(rootUrl + "about");
     await win.loadURL(rootUrl);
-    await captions.loadURL(path.join(rootUrl, "captions"));
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");

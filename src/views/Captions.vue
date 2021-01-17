@@ -1,9 +1,5 @@
 <template>
-  <v-container>
-    <v-row class="text-center">
-      <p class="caption">{{ liveCaption }}</p>
-    </v-row>
-  </v-container>
+  <p class="text-h4 text-center">{{ liveCaption }}</p>
 </template>
 
 <script lang="ts">
