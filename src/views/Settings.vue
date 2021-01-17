@@ -43,8 +43,6 @@ import Vue from "vue";
 import { ipcRenderer, remote } from "electron";
 import WindowFrame from "@/components/WindowFrame.vue";
 
-const preferences = ipcRenderer.sendSync("getPreferences");
-
 export default Vue.extend({
   name: "Settings",
   components: {
