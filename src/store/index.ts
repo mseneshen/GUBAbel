@@ -27,7 +27,7 @@ const store = new Vuex.Store({
       state.defaultDimensionsWidth = width;
       ipcRenderer.sendSync("setPreferences", state);
     },
-    setDefaultDimensionsHeight(state, height) {
+    setHeight(state, height) {
       state.defaultDimensionsHeight = height;
       ipcRenderer.sendSync("setPreferences", state);
     }

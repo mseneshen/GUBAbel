@@ -1,32 +1,60 @@
 <template>
   <div>
     <WindowFrame />
-    <v-form class="form" ref="form" v-model="valid" lazy-validation>
+    <v-form class="form" ref="form" lazy-validation>
       <v-select
         required
         label="Input Language"
         :items="languages"
-        v-model="settings.inputLanguage"
+        item-text="text"
+        item-value="val"
+        v-model="inputLang"
       ></v-select>
       <v-select
         required
         label="Output Language"
         :items="languages"
-        v-model="settings.outputLanguage"
+        item-text="text"
+        item-value="val"
+        v-model="outputLang"
       ></v-select>
       <v-text-field
         required
         label="Font Family"
         v-model="settings.fontFamily"
+        @change="updateFontFamily"
       ></v-text-field>
       <v-slider
         required
-        :hint="settings.fontSize"
+        :hint="String(settings.fontSize)"
         min="6"
         max="80"
         label="Font Size"
         persistent-hint
         v-model="settings.fontSize"
+        @change="updateFontSize"
+      ></v-slider>
+      <v-slider
+        required
+        :hint="String(settings.defaultDimensionsWidth)"
+        min="60"
+        max="2160"
+        step="20"
+        label="Default Caption Width"
+        persistent-hint
+        v-model="settings.defaultDimensionsWidth"
+        @change="updateWidth"
+      ></v-slider>
+      <v-slider
+        required
+        :hint="String(settings.defaultDimensionsHeight)"
+        min="20"
+        max="200"
+        step="10"
+        label="Default Caption Height"
+        persistent-hint
+        v-model="settings.defaultDimensionsHeight"
+        @change="updateHeight"
       ></v-slider>
     </v-form>
   </div>
@@ -50,31 +78,76 @@ export default Vue.extend({
   },
   data: () => ({
     languages: [
-      "Chinese, Mandarin (Simplified, China)\tzh (cmn-Hans-CN)",
-      "Chinese, Mandarin (Traditional, Taiwan)\tzh-TW (cmn-Hant-TW)",
-      "Czech (Czech Republic)\tcs-CZ",
-      "Danish (Denmark)\tda-DK",
-      "English (Australia)\ten-AU",
-      "English (India)\ten-IN",
-      "English (Singapore)\ten-SG",
-      "English (United Kingdom)\ten-GB",
-      "English (United States)\ten-US",
-      "Finnish (Finland)\tfi-FI",
-      "French (France)\tfr-FR",
-      "German (Germany)\tde-DE",
-      "Hindi (India)\thi-IN",
-      "Indonesian (Indonesia)\tid-ID",
-      "Italian (Italy)\tit-IT",
-      "Japanese (Japan)\tja-JP",
-      "Korean (South Korea)\tko-KR",
-      "Spanish (United States)\tes-US",
-      "Swedish (Sweden)\tsv-SE",
-      "Turkish (Turkey)\ttr-TR"
+      {
+        text: "Chinese, Mandarin (Simplified, China)",
+        val: "zh (cmn-Hans-CN)"
+      },
+      {
+        text: "Chinese, Mandarin (Traditional, Taiwan)",
+        val: "zh-TW (cmn-Hant-TW)"
+      },
+      { text: "Czech (Czech Republic)", val: "cs-CZ" },
+      { text: "Danish (Denmark)", val: "da-DK" },
+      { text: "English (Australia)", val: "en-AU" },
+      { text: "English (India)", val: "en-IN" },
+      { text: "English (Singapore)", val: "en-SG" },
+      { text: "English (United Kingdom)", val: "en-GB" },
+      { text: "English (United States)", val: "en-US" },
+      { text: "Finnish (Finland)", val: "fi-FI" },
+      { text: "French (France)", val: "fr-FR" },
+      { text: "German (Germany)", val: "de-DE" },
+      { text: "Hindi (India)", val: "hi-IN" },
+      { text: "Indonesian (Indonesia)", val: "id-ID" },
+      { text: "Italian (Italy)", val: "it-IT" },
+      { text: "Japanese (Japan)", val: "ja-JP" },
+      { text: "Korean (South Korea)", val: "ko-KR" },
+      { text: "Spanish (United States)", val: "es-US" },
+      { text: "Swedish (Sweden)", val: "sv-SE" },
+      { text: "Turkish (Turkey)", val: "tr-TR" }
     ]
   }),
   computed: {
     settings() {
       return this.$store.state;
+    },
+    inputLang: {
+      // getter
+      get: function() {
+        return this.findLanguage(this.languages, this.settings.inputLanguage);
+      },
+      // setter
+      set: function(newVal) {
+        this.$store.commit("setInputLanguage", newVal);
+      }
+    },
+    outputLang: {
+      // getter
+      get: function() {
+        return this.findLanguage(this.languages, this.settings.outputLanguage);
+      },
+      // setter
+      set: function(newVal) {
+        this.$store.commit("setOutputLanguage", newVal);
+      }
+    }
+  },
+  methods: {
+    findLanguage: (arr, val) => {
+      for (const obj of arr) {
+        if (obj.val === val) return obj;
+      }
+    },
+    updateFontFamily: function() {
+      this.$store.commit("setFontFamily", this.settings.fontFamily);
+    },
+    updateFontSize: function() {
+      this.$store.commit("setFontSize", this.settings.fontSize);
+    },
+    updateWidth: function() {
+      this.$store.commit("setWidth", this.settings.defaultDimensionsWidth);
+    },
+    updateHeight: function() {
+      this.$store.commit("setHeight", this.settings.defaultDimensionsHeight);
     }
   }
 });
