@@ -29,7 +29,8 @@ async function createWindow() {
     height: 80,
     frame: false,
     webPreferences: {
-      devTools: false,
+      enableRemoteModule: true,
+      // devTools: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
@@ -41,8 +42,6 @@ async function createWindow() {
   const rootUrl = process.env.WEBPACK_DEV_SERVER_URL as string;
   if (rootUrl) {
     // Load the url of the dev server if in development mode
-
-    console.log(rootUrl);
     await win.loadURL(rootUrl);
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
@@ -55,10 +54,26 @@ async function createWindow() {
 async function createTray() {
   const tray = new Tray(iconPath);
   const contextMenu = Menu.buildFromTemplate([
-    { label: "Toggle On/Off", type: "checkbox", checked: true },
-    { label: "Settings", type: "normal" },
+    {
+      label: "Toggle On/Off",
+      type: "checkbox",
+      checked: true
+    },
+    {
+      label: "Settings",
+      type: "normal",
+      click: (menuItem, browserWindow, event) => {
+        preferences.show();
+      }
+    },
     { type: "separator" },
-    { label: "Quit", type: "normal", role: "close" }
+    {
+      label: "Quit",
+      type: "normal",
+      click: (menuItem, browserWindow, event) => {
+        app.quit();
+      }
+    }
   ]);
   tray.setToolTip("GUBAbel");
   tray.setContextMenu(contextMenu);
@@ -91,7 +106,7 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
-  createTray();
+  // createTray();
   createWindow();
 });
 
