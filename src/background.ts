@@ -44,14 +44,14 @@ ipcMain.on("vuexMutation", (event, mutation) => {
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: preferences.value("defaultDimensions.width"),
-    height: preferences.value("defaultDimensions.height"),
+    width: preferences.value("defaultDimensionsWidth"),
+    height: preferences.value("defaultDimensionsHeight"),
     frame: false,
     center: true,
     alwaysOnTop: true,
     webPreferences: {
       enableRemoteModule: true,
-      // devTools: false,
+      devTools: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
