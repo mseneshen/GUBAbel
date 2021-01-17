@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-icon dark small class="move-btn">mdi-cursor-move</v-icon>
-    <p class="text-h4 text-center">{{ liveCaption }}</p>
+    <v-icon dark class="move-btn">mdi-cursor-move</v-icon>
+    <p :style="cssVars" class="text-custom text-center">{{ liveCaption }}</p>
     <router-link
       class="settings-btn"
       :to="{ name: 'Settings' }"
@@ -31,6 +31,12 @@
   top: 5px;
   left: 10px;
   text-decoration: none;
+  cursor: move !important;
+}
+
+.text-custom {
+  font-size: var(--text-size) !important;
+  font-family: var(--font-family) !important;
 }
 </style>
 
@@ -41,6 +47,14 @@ export default Vue.extend({
   name: "Captions",
   data: () => ({
     liveCaption: "haha text goes brrrrrr"
-  })
+  }),
+  computed: {
+    cssVars() {
+      return {
+        "--text-size": this.$store.state.fontSize + "pt",
+        "--font-family": this.$store.state.fontFamily
+      };
+    }
+  }
 });
 </script>

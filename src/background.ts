@@ -20,13 +20,10 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 async function createWindow() {
-  // As a test to open preferences while we don't have the taskbar implemented:
-  // preferences.show();
-
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 80,
+    width: preferences.value("defaultDimensions.width"),
+    height: preferences.value("defaultDimensions.height"),
     frame: false,
     webPreferences: {
       enableRemoteModule: true,
